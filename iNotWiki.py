@@ -97,13 +97,13 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
     markdown_content = f"# Missing Wikipedia Articles Report ({search_type}: {search_value})\n\n"
 
     # Create an index at the top
-    markdown_content += "## Index\n\n"
+    #markdown_content += "## Index\n\n"
 
-    for taxon in missing_wikipedia_articles:
-        taxon_name = taxon["taxon_name"]
-        markdown_content += f"- [{taxon_name}](#{taxon_name.replace(' ', '-').lower()})\n"
+    #for taxon in missing_wikipedia_articles:
+    #    taxon_name = taxon["taxon_name"]
+    #    markdown_content += f"- [{taxon_name}](#{taxon_name.replace(' ', '-').lower()})\n"
 
-    markdown_content += "\n---\n\n"
+    # markdown_content += "\n---\n\n"
 
     for taxon in missing_wikipedia_articles:
         taxon_name = taxon["taxon_name"]
@@ -113,18 +113,6 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
 
         markdown_content += f"## 🦠 {taxon_name}\n\n"
         markdown_content += f"🔗 **iNaturalist Page**: [View on iNaturalist](https://www.inaturalist.org/taxa/{inat_id})\n\n"
-
-        # Fetch iNaturalist observations for the species
-        # Fetch iNaturalist observations for the species
-        # obs_url = f"https://api.inaturalist.org/v1/observations?taxon_id={inat_id}&quality_grade=research&per_page=200"
-        #if hasattr(args, "username"):
-        #    obs_url += f"&user_id={args.username}"
-        #if hasattr(args, "country_code"):
-        #    obs_url += f"&place_id={args.country_code}"
-        #if hasattr(args, "project_id"):
-        #    obs_url += f"&project_id={args.project_id}"
-        # print(obs_url)
-        #obs_response = safe_request(obs_url)
 
         images = []
 
