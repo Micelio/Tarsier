@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 from tqdm import tqdm
 import time
+import urllib.parse
 
 # Ensure required dependencies are installed
 try:
@@ -178,7 +179,7 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
                     f"%7Cdescription%3D%7B%7Ben%7C{encoded_taxon_name}%20({inat_id})%7D%7D%0A"
                     f"%7Cdate%3D{datetime.now().strftime('%Y-%m-%dT%H:%M')}%0A"
                     f"%7Csource%3Dhttps://www.inaturalist.org/observations/{inat_id}%0A"
-                    f"%7Cauthor%3D{author_name}%0A"
+                    f"%7Cauthor%3D{urllib.parse.quote(author_name)}%0A"
                     f"%7Cother%20versions%3D%0A%7D%7D%0A"
                     f"%5B%5BCategory%3A{encoded_taxon_name}%5D%5D%0A"
                     f"%7B%7BGbif%7C{obs_id}%7D%7D"
