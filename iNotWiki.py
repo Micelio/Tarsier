@@ -72,13 +72,13 @@ def fetch_missing_wikipedia_articles(base_url, args):
                             "inat_obs_id": obs["id"],
                             "inat_taxon_id": obs["taxon"]["id"],
                             "taxon_name": obs["taxon"]["name"],
+                            "full_name": obs["user"]["name_autocomplete"],
+                            "photos": obs["photos"],
                         })
-
             progress_bar.update(1)
 
             if "results" not in photos or len(photos["results"]) < 200:
                 break
-
             page += 1
 
     print(f"Total taxa fetched: "+str(page*200))
@@ -93,10 +93,10 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
     filename = f"missing_wikipedia_{search_type}_{search_value}.md"
     report_path = os.path.join(SUGGESTIONS_FOLDER, filename)
 
-    markdown_content = f"# 📖 Missing Wikipedia Articles Report ({search_type}: {search_value})\n\n"
+    markdown_content = f"# Missing Wikipedia Articles Report ({search_type}: {search_value})\n\n"
 
     # Create an index at the top
-    markdown_content += "## 📌 Index\n\n"
+    markdown_content += "## Index\n\n"
 
     for taxon in missing_wikipedia_articles:
         taxon_name = taxon["taxon_name"]
@@ -106,6 +106,8 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
 
     for taxon in missing_wikipedia_articles:
         taxon_name = taxon["taxon_name"]
+        author_name = taxon["full_name"]
+        photos = taxon["photos"]
         inat_id = taxon["inat_taxon_id"]
 
         markdown_content += f"## 🦠 {taxon_name}\n\n"
@@ -113,54 +115,75 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
 
         # Fetch iNaturalist observations for the species
         # Fetch iNaturalist observations for the species
-        obs_url = f"https://api.inaturalist.org/v1/observations?taxon_id={inat_id}&quality_grade=research&per_page=200"
-        if hasattr(args, "username"):
-            obs_url += f"&user_id={args.username}"
-        if hasattr(args, "country_code"):
-            obs_url += f"&place_id={args.country_code}"
-        if hasattr(args, "project_id"):
-            obs_url += f"&project_id={args.project_id}"
-        print(obs_url)
-        obs_response = safe_request(obs_url)
+        # obs_url = f"https://api.inaturalist.org/v1/observations?taxon_id={inat_id}&quality_grade=research&per_page=200"
+        #if hasattr(args, "username"):
+        #    obs_url += f"&user_id={args.username}"
+        #if hasattr(args, "country_code"):
+        #    obs_url += f"&place_id={args.country_code}"
+        #if hasattr(args, "project_id"):
+        #    obs_url += f"&project_id={args.project_id}"
+        # print(obs_url)
+        #obs_response = safe_request(obs_url)
 
         images = []
-        if obs_response:
-            obs_data = obs_response.json()
-            for obs in obs_data.get("results", []):
-                if "photos" in obs and obs["photos"]:
-                    for photo in obs["photos"]:
-                        if "url" in photo:
-                            images.append({
-                                "url": photo.get("medium_url", photo["url"].replace("medium", "original")),  # ✅ Fallback to another URL
-                                "attribution": photo.get("attribution", "Unknown")
-                            })
+
+        for obs in photos:
+            if "url" in obs:
+                images.append({
+                    "url": obs["url"].replace("square", "original"),  #
+                    "attribution": obs.get("attribution", "Unknown"),
+                    "license_code": obs.get("license_code", "Unknown"),
+                    "location": obs.get("location", "Unknown"),
+                    "id": obs["id"],
+
+                })
+
+
+        #if obs_response:
+        #    obs_data = obs_response.json()
+        #    for obs in obs_data.get("results", []):
+        #        if "photos" in obs and obs["photos"]:
+        #            for photo in obs["photos"]:
+        #                if "url" in photo:
+        #                    images.append({
+        #                        "url": photo.get("medium_url", photo["url"].replace("medium", "original")),  # ✅ Fallback to another URL
+        #                        "attribution": photo.get("attribution", "Unknown"),
+        #                        "license_code": photo.get("license_code", "Unknown"),
+        #                        "location": obs.get("location", "Unknown"),
+        #                        "id": obs["id"]
+        #                    })
 
         # Add all images found
         # Add all images found
         if images:
             for img in images:
                 image_url = img["url"]
+                if img["license_code"] == "cc0":
+                    license = "Cc-zero"
+                elif img["license_code"] == "cc-by":
+                    license = "cc-by-4.0"
+                elif img["license_code"] == "cc-by-sa":
+                    license = "cc-by-sa-4.0"
+                else:
+                    license = None
                 attribution = img["attribution"]
                 obs_id = taxon["inat_obs_id"]  # Get iNaturalist Observation ID
                 inat_id = taxon["inat_taxon_id"]
                 encoded_taxon_name = taxon_name.replace(" ", "_")
-                gbif_id = obs_id  # Assuming GBIF occurrence ID matches the iNaturalist ID
 
                 # Construct the Wikimedia Commons upload URL
                 commons_upload_url = (
                     f"https://commons.wikimedia.org/wiki/Special:Upload?"
                     f"wpUploadDescription=%7B%7BInformation%0A"
-                    f"%7Cdescription%3D%7B%7Ben%7C{encoded_taxon_name}%20({obs_id})%7D%7D%0A"
+                    f"%7Cdescription%3D%7B%7Ben%7C{encoded_taxon_name}%20({inat_id})%7D%7D%0A"
                     f"%7Cdate%3D{datetime.now().strftime('%Y-%m-%dT%H:%M')}%0A"
-                    f"%7Csource%3Dhttps://www.inaturalist.org/observations/{obs_id}%0A"
-                    f"%7Cauthor%3D{attribution}%0A"
-                    f"%7Cpermission%3D%0A"
+                    f"%7Csource%3Dhttps://www.inaturalist.org/observations/{inat_id}%0A"
+                    f"%7Cauthor%3D{author_name}%0A"
                     f"%7Cother%20versions%3D%0A%7D%7D%0A"
                     f"%5B%5BCategory%3A{encoded_taxon_name}%5D%5D%0A"
-                    f"%7B%7Blocation%7C0%7C0%7D%7D"  # Placeholder for location data
-                    f"%7B%7BGbif%7C{gbif_id}%7D%7D"
+                    f"%7B%7BGbif%7C{obs_id}%7D%7D"
                     f"%7B%7BCategory%3AReuse%20images%20with%20Tarsier%7D%7D"
-                    f"&wpLicense=Cc-zero"
+                    f"&wpLicense={license}"
                     f"&wpDestFile={encoded_taxon_name}-{obs_id}.jpg"
                     f"&wpSourceType=url"
                     f"&wpUploadFileURL={image_url}"
@@ -169,7 +192,8 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
                 # Add image, attribution, and upload button to markdown
                 markdown_content += f"![{taxon_name}]({image_url})\n\n"
                 markdown_content += f"📷 *Image credit*: {attribution}\n\n"
-                markdown_content += f"🔼 [Upload to Commons]({commons_upload_url})\n\n"
+                if license:
+                    markdown_content += f"🔼 [Upload to Commons]({commons_upload_url})\n\n"
 
         else:
             markdown_content += "❌ *No images available from observations.*\n\n"
