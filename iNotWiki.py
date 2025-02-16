@@ -131,7 +131,7 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
                     for photo in obs["photos"]:
                         if "url" in photo:
                             images.append({
-                                "url": photo.get("medium_url", photo["url"]),  # ✅ Fallback to another URL
+                                "url": photo.get("medium_url", photo["url"].replace("medium", "original")),  # ✅ Fallback to another URL
                                 "attribution": photo.get("attribution", "Unknown")
                             })
 
