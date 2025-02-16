@@ -1,4 +1,4 @@
-name: 📖 Missing Wikipedia Articles Request
+name:  Missing Wikipedia Articles from iNaturalist observations.
 description: Request a report on taxa missing Wikipedia articles based on an iNaturalist username, project, or country.
 title: "[Missing Wikipedia]: "
 labels: ["report"]
@@ -56,3 +56,9 @@ body:
       placeholder: "Any special instructions or focus areas?"
     validations:
       required: false
+
+    - type: markdown
+      attributes:
+        value: |
+          ---
+          ![image](./images/tarsier-01.png) TARSIER: Tools for Authoring, Referencing, and Structuring Images in Encyclopedic Resources
