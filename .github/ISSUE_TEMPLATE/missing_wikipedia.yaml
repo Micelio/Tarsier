@@ -1,6 +1,5 @@
 name:  Missing Wikipedia Articles from iNaturalist observations.
 description: Request a report on taxa missing Wikipedia articles based on an iNaturalist username, project, or country.
-title: "[Missing Wikipedia]: "
 labels: ["report"]
 body:
   - type: markdown
