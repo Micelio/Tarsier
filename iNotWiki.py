@@ -26,26 +26,28 @@ def safe_request(url, max_retries=5):
     while retries < max_retries:
         try:
             response = requests.get(url)
+            if response is None:
+                print(f" Error fetching {url}: HTTP {response.status_code}")
+                return None  # Stop on other errors
+            elif response.status_code == 200:
+                return response  #  Successful response
 
-            if response.status_code == 200:
-                return response  # ✅ Successful response
-
-            elif response.status_code == 429:  # Too many requests
-                retry_after = int(response.headers.get("Retry-After", 20))  # Default: wait 10 sec
-                print(f"⚠️ Rate limit reached! Waiting {retry_after} seconds before retrying...")
+            elif response.status_code == 429 or response.status_code == 403:  # Too many requests
+                retry_after = int(response.headers.get("Retry-After", 20))
+                print(f" Rate limit reached! Waiting {retry_after} seconds before retrying...")
                 time.sleep(retry_after)
                 retries += 1  # Count the retry
 
             else:
-                print(f"❌ HTTP Error {response.status_code} for {url}")
-                break  # No point in retrying for 4xx or 5xx errors except 429
+                print(f" HTTP Error {response.status_code} for {url}")
+                return None  # No point in retrying for 4xx or 5xx errors except 429
 
         except requests.RequestException as e:
-            print(f"❌ Request failed due to {e}. Retrying...")
+            print(f" Request failed due to {e}. Retrying...")
             time.sleep(5)
             retries += 1
 
-    print("❌ Max retries reached. Skipping this request.")
+    print(" Max retries reached. Skipping this request.")
     return None  # Skip if too many failures
 
 def fetch_missing_wikipedia_articles(base_url, args):
@@ -61,8 +63,8 @@ def fetch_missing_wikipedia_articles(base_url, args):
             url = f"{base_url}&page={page}"
             response = safe_request(url)
 
-            if response.status_code != 200:
-                print(f"Error fetching page {page}: {response.status_code}")
+            if response is None or response.status_code != 200:
+                print(f"Error fetching page {page}:")
                 break
 
             photos = response.json()
