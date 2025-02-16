@@ -57,8 +57,8 @@ body:
     validations:
       required: false
 
-    - type: markdown
-      attributes:
-        value: |
-          ---
-          ![image](./images/tarsier-01.png) TARSIER: Tools for Authoring, Referencing, and Structuring Images in Encyclopedic Resources
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ![image](./images/tarsier-01.png) TARSIER: Tools for Authoring, Referencing, and Structuring Images in Encyclopedic Resources
