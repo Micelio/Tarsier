@@ -11,4 +11,4 @@ open data.
 * [Tarsier websearch](https://andrawaag.github.io/tarsier/index.html) A tool to identify missing Wikipedia articles for taxa found in GBIF
 * [taxonname-wpstubmaker](https://github.com/Micelio/taxonname-wpstubmaker) A jupyter notebook that assists in drafting a stub on the English Wikipedia, by guiding the editor through extracted information from various sources.
 
-![image](./tarsier-01.png) TARSIER: Tools for Authoring, Referencing, and Structuring Images in Encyclopedic Resources
+![image](./images/tarsier-01.png) TARSIER: Tools for Authoring, Referencing, and Structuring Images in Encyclopedic Resources
