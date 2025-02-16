@@ -1,73 +1,14 @@
-# 🦠 iNotWiki: Missing Wikipedia Articles CLI Tool
+Welcome to the Tarsier Repository
+===============================
+Tarsier that is a set of tools to help with the creation of Wikipedia articles for taxa that
+are missing from Wikipedia. The tools are designed to be used by a human editor to navigate 
+various open data sources and to help with the creation of new Wikipedia articles using that
+open data.
 
-A command-line tool to find **missing Wikipedia articles** for biological taxa using **iNaturalist** and **Wikidata**.
+# Tools
+* [iNotWiki](iNotWiki.md) - A command-line tool to find missing Wikipedia articles for biological taxa using iNaturalist and Wikidata.
+* [iNotWikiGithub](iNotWikiGUI.md) - A UI for iNatWiki using Github Actions and Github Issues to manage the workflow to identify missing Wikipedia articles driven by iNaturalist observations.
+* [Tarsier websearch](https://andrawaag.github.io/tarsier/index.html) A tool to identify missing Wikipedia articles for taxa found in GBIF
+* [taxonname-wpstubmaker](https://github.com/Micelio/taxonname-wpstubmaker) A jupyter notebook that assists in drafting a stub on the English Wikipedia, by guiding the editor through extracted information from various sources.
 
-## Features:
-* Fetches observations from **iNaturalist** (with **pagination** support).  
-* Checks **Wikidata** to see if taxa have existing **Wikipedia pages**.  
-* Outputs a list of **taxa** that do **not** have Wikipedia articles.  
-* Uses a **progress bar (`tqdm`)** to track both **iNaturalist pagination** and **Wikidata verification**.  
-* Works via **CLI**, allowing searches by **taxon, user, country, or project**.  
-
----
-
-## 📥 Installation
-### **1. Install Python Dependencies**
-You need **Python 3.7+**. Install required packages:
-```sh
-pip install requests tqdm wikidataintegrator
-```
-
-### **2. Download the script**
-[Download `iNotWiki.py`](sandbox:/mnt/data/iNotWiki.py)  
-Or, copy the script from this repository.
-
----
-
-## 🚀 Usage
-Run the script from the terminal:
-```sh
-python iNotWiki.py [command] [options]
-```
-
-### **Commands**
-| Command | Description |
-|---------|------------|
-| `taxon` | Search for missing Wikipedia articles by **iNaturalist Taxon ID** |
-| `user` | Search by **iNaturalist username** (find missing taxa in their observations) |
-| `country` | Search by **iNaturalist country code** (find missing taxa from a country) |
-| `project` | Search by **iNaturalist project ID** |
-
----
-
-## 🎯 Examples
-### 🔍 **Find missing Wikipedia articles for a taxon**
-```sh
-python iNotWiki.py taxon 47222
-```
-
-### 🧑‍🔬 **Find missing articles for an iNaturalist user**
-```sh
-python iNotWiki.py user example_user --wikipedia https://en.wikipedia.org/
-```
-
-### 🌍 **Find missing taxa from a country**
-```sh
-python iNotWiki.py country 21
-```
-
-### 🏗 **Find missing Wikipedia articles in a project**
-```sh
-python iNotWiki.py project 54321
-```
-
----
-
-## 🛠 Development & Contributions
-Feel free to contribute to `iNotWiki` by submitting pull requests or reporting issues.
-
----
-
-## 📜 License
-This script is open-source and available under the **MIT License**.
 
