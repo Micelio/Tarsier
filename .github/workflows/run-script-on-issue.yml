@@ -62,8 +62,13 @@ jobs:
           elif [[ -n "$country_code" ]]; then
             python iNotWiki.py country "$country_code"
             REPORT_FILE="suggestions/missing_wikipedia_country_${country_code}.md"
+          fi
+          
+          if [[ -f "$REPORT_FILE" ]]; then
+            echo "Generated report file: $REPORT_FILE"
+            echo "REPORT_FILE=$REPORT_FILE" >> $GITHUB_ENV
           else
-            echo "❌ No valid parameters found in the issue. Exiting..."
+            echo "❌ No report file was generated. Exiting..."
             exit 1
           fi
           
@@ -83,9 +88,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -f "$REPORT_FILE" ]; then
+          if [ -f "${{ env.REPORT_FILE }}" ]; then
             # Split report into 60KB chunks (GitHub comment limit)
-            split -b 60000 "$REPORT_FILE" report_part_
+            split -b 60000 "${{ env.REPORT_FILE }}" report_part_
           
             # Loop through all chunks and post them as separate comments
             for part in report_part_*; do
