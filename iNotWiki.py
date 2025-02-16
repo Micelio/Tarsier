@@ -24,20 +24,26 @@ def safe_request(url, max_retries=5):
     """Make API requests safely, handling rate limits (HTTP 429)."""
     retries = 0
     while retries < max_retries:
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
 
-        if response.status_code == 200:
-            return response  # ✅ Successful response
+            if response.status_code == 200:
+                return response  # ✅ Successful response
 
-        elif response.status_code == 429:  # Too many requests
-            retry_after = int(response.headers.get("Retry-After", 20))  # Default: wait 10 sec
-            print(f"⚠️ Rate limit reached! Waiting {retry_after} seconds before retrying...")
-            time.sleep(retry_after)
-            retries += 1  # Count the retry
+            elif response.status_code == 429:  # Too many requests
+                retry_after = int(response.headers.get("Retry-After", 20))  # Default: wait 10 sec
+                print(f"⚠️ Rate limit reached! Waiting {retry_after} seconds before retrying...")
+                time.sleep(retry_after)
+                retries += 1  # Count the retry
 
-        else:
-            print(f"❌ Error fetching {url}: HTTP {response.status_code}")
-            return None  # Stop on other errors
+            else:
+                print(f"❌ HTTP Error {response.status_code} for {url}")
+                break  # No point in retrying for 4xx or 5xx errors except 429
+
+        except requests.RequestException as e:
+            print(f"❌ Request failed due to {e}. Retrying...")
+            time.sleep(5)
+            retries += 1
 
     print("❌ Max retries reached. Skipping this request.")
     return None  # Skip if too many failures
