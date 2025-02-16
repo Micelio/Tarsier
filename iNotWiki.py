@@ -136,10 +136,41 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
                             })
 
         # Add all images found
+        # Add all images found
         if images:
             for img in images:
-                markdown_content += f"![{taxon_name}]({img['url']})\n\n"
-                markdown_content += f"📷 *Image credit*: {img['attribution']}\n\n"
+                image_url = img["url"]
+                attribution = img["attribution"]
+                obs_id = taxon["inat_obs_id"]  # Get iNaturalist Observation ID
+                inat_id = taxon["inat_taxon_id"]
+                encoded_taxon_name = taxon_name.replace(" ", "_")
+                gbif_id = obs_id  # Assuming GBIF occurrence ID matches the iNaturalist ID
+
+                # Construct the Wikimedia Commons upload URL
+                commons_upload_url = (
+                    f"https://commons.wikimedia.org/wiki/Special:Upload?"
+                    f"wpUploadDescription=%7B%7BInformation%0A"
+                    f"%7Cdescription%3D%7B%7Ben%7C{encoded_taxon_name}%20({obs_id})%7D%7D%0A"
+                    f"%7Cdate%3D{datetime.now().strftime('%Y-%m-%dT%H:%M')}%0A"
+                    f"%7Csource%3Dhttps://www.inaturalist.org/observations/{obs_id}%0A"
+                    f"%7Cauthor%3D{attribution}%0A"
+                    f"%7Cpermission%3D%0A"
+                    f"%7Cother%20versions%3D%0A%7D%7D%0A"
+                    f"%5B%5BCategory%3A{encoded_taxon_name}%5D%5D%0A"
+                    f"%7B%7Blocation%7C0%7C0%7D%7D"  # Placeholder for location data
+                    f"%7B%7BGbif%7C{gbif_id}%7D%7D"
+                    f"%7B%7BCategory%3AReuse%20images%20with%20Tarsier%7D%7D"
+                    f"&wpLicense=Cc-zero"
+                    f"&wpDestFile={encoded_taxon_name}-{obs_id}.jpg"
+                    f"&wpSourceType=url"
+                    f"&wpUploadFileURL={image_url}"
+                )
+
+                # Add image, attribution, and upload button to markdown
+                markdown_content += f"![{taxon_name}]({image_url})\n\n"
+                markdown_content += f"📷 *Image credit*: {attribution}\n\n"
+                markdown_content += f"🔼 [Upload to Commons]({commons_upload_url})\n\n"
+
         else:
             markdown_content += "❌ *No images available from observations.*\n\n"
 
