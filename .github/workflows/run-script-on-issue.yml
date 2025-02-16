@@ -98,7 +98,7 @@ jobs:
           
               curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
                 -H "Accept: application/vnd.github.v3+json" \
-                https://api.github.com/repos/Micelio/Tarsier/issues/3/comments \
+                https://api.github.com/repos/Micelio/Tarsier/issues/${{ github.event.issue.number }}/comments \
                 -d "{\"body\": \"$COMMENT_BODY\"}"
           
               sleep 2  # Avoid hitting API rate limits
