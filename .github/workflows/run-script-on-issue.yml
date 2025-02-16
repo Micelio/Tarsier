@@ -84,14 +84,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f "$REPORT_FILE" ]; then
-            # Read and escape Markdown content
-            COMMENT_BODY=$(cat "$REPORT_FILE" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-
-            # Post the comment
-            curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
-              -d "{\"body\": \"$COMMENT_BODY\"}"
+            # Split report into 60KB chunks (GitHub comment limit)
+            split -b 60000 "$REPORT_FILE" report_part_
+          
+            # Loop through all chunks and post them as separate comments
+            for part in report_part_*; do
+              COMMENT_BODY=$(cat "$part" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          
+              curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                https://api.github.com/repos/Micelio/Tarsier/issues/3/comments \
+                -d "{\"body\": \"$COMMENT_BODY\"}"
+          
+              sleep 2  # Avoid hitting API rate limits
+            done
+          
+            echo "✅ Report successfully posted in multiple comments."
           else
             echo "❌ No report file found. Skipping comment."
           fi
