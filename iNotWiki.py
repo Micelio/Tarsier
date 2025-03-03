@@ -178,7 +178,7 @@ def generate_markdown_report(missing_wikipedia_articles, search_type, search_val
                     f"%7Cauthor%3D{urllib.parse.quote(author_name)}%0A"
                     f"%7Cother%20versions%3D%0A%7D%7D%0A"
                     f"%5B%5BCategory%3A{encoded_taxon_name}%5D%5D%0A"
-                    f"%7B%7BGbif%7C{obs_id}%7D%7D"
+                    f"%7B%7BiNaturalist%7C{obs_id}%7D%7D"
                     f"%7B%7BCategory%3AReuse%20images%20with%20Tarsier%7D%7D"
                     f"&wpLicense={license}"
                     f"&wpDestFile={encoded_taxon_name}-{obs_id}.jpg"
